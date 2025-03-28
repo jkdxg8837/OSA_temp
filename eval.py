@@ -8,7 +8,10 @@ def evaluate(args, model, dataloader, logger, split=1):
         text_features = []
         num_anns = dataloader.dataset.num_anns
         num_ids = len(dataloader.dataset)
-        num_imgs = dataloader.dataset.img_length
+        if args.dataset != 'coco':
+            num_imgs = num_ids
+        else:
+            num_imgs = dataloader.dataset.img_length
         for idx, batch in enumerate(dataloader):
             images, texts, *_ = batch
             images = images.cuda()
@@ -33,7 +36,7 @@ def evaluate(args, model, dataloader, logger, split=1):
 
         caption_num = 5
 
-        if args.dataset == 'cc':
+        if args.dataset != 'coco':
             caption_num = 1
 
         image_features = image_features.view(-1, caption_num, image_features.shape[-1]).mean(1).squeeze()
@@ -98,7 +101,7 @@ def evaluate(args, model, dataloader, logger, split=1):
                 
                 logger.info("1K Mean R1: {:.2f}".format(results['mean_R1']))
 
-        elif args.dataset == 'f30k'or args.dataset == 'cc':
+        elif args.dataset == 'f30k' or 'cc' in args.dataset:
             results = metric_compute(sim_matrix, label, logger)
             
             logger.info("Image-to-Text:")

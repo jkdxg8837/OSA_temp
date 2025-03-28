@@ -357,6 +357,8 @@ class CLIP(nn.Module):
 
     def forward(self, image, text):
         image_features = self.encode_image(image)
+        if text.shape[1] ==1:
+            text = text.squeeze(1)
         text_features = self.encode_text(text)
         # text_features = self.encode_image(text)
 

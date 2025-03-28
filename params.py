@@ -21,8 +21,14 @@ def parse_args():
         help="Experiment Name",
     )
     parser.add_argument(
+    "--cache_dir",
+    type=str,
+    default='debuging',
+    help="Experiment Name",
+    )
+    parser.add_argument(
         "--dataset",
-        choices=["coco", "f30k", "cc"],
+        choices=["coco", "f30k", "cc", "cc3m"],
         default="coco",
         help="Name of the dataset to use.",
     )
