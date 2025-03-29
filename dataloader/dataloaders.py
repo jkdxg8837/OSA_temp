@@ -313,7 +313,7 @@ def construct_cc3m_wds(args, preprocess, tokenizer, subset, logger):
 
     logger.info("========== Initial the %s set ==========", subset)
     bucket = "https://huggingface.co/datasets/pixparse/cc3m-wds/resolve/main"
-    trainset_url = bucket + "/cc3m-train-{0000..0005}.tar"
+    trainset_url = bucket + "/cc3m-train-{0000..0575}.tar"
     # valset_url = bucket + "/cc3m-validation-{0000..0002}.tar"
     if subset == 'train':
         url = trainset_url

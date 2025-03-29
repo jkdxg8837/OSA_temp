@@ -132,12 +132,10 @@ def main():
             images, texts, *_ = batch
             images = [preprocess(image).unsqueeze(0) for image in images]
             images = torch.cat(images, dim=0)
-            # images = torch.stack(images, dim=0)
-            # images = images.view(-1, 3, 224, 224)
+
             texts = tokenizer(texts, truncate=True)
             texts = [text.unsqueeze(0) for text in texts]
             texts = torch.cat(texts, dim=0)
-            # texts = torch.stack(texts, dim=0)
             images = images.cuda()
             texts = texts.cuda()
 

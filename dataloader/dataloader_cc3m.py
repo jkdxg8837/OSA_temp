@@ -16,7 +16,7 @@ class CC3m_Dataset(Dataset):
         self.images_id, self.captions = [], []
         if subset != "train":
             subset = "validation"
-            path = '/home/u5649209/workspace/OSA/data/cc3m-validation-0000.tar'
+            path = '/dcs/pg24/u5649209/data/OSA_temp/cache/cc3m-validation.tar'
             self.dataset = load_dataset("pixparse/cc3m-wds", data_files={"validation": path}, split="validation")
         else:
             path = '/home/u5649209/workspace/OSA/data/cc3m-train-0000.tar'
@@ -30,8 +30,7 @@ class CC3m_Dataset(Dataset):
         logger.info('cc3m is loaded')
 
     def __len__(self):
-        if self.subset == "train":
-            return self.dataset.num_rows
+        return self.dataset.num_rows
 
     def __getitem__(self, idx):
         # image = self.preprocess(Image.open(os.path.join(self.image_root, self.image_name[idx]))) # Image from PIL module

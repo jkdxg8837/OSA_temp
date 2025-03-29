@@ -107,7 +107,7 @@ def main():
     loss_img = loss_img.cuda()
     loss_txt = loss_txt.cuda()
 
-    total_steps = train_length * args.epochs
+    total_steps = train_length // args.batch_size * args.epochs
 
     optimizer = optim.AdamW(model.parameters(), lr=args.lr, betas=(args.beta1, args.beta2), eps=args.eps, weight_decay=args.weight_decay)
     scheduler = cosine_lr(optimizer, args.lr, args.warmup, total_steps)
@@ -129,9 +129,11 @@ def main():
         logits_rand_i, logits_rand_t = estimator_model(rand_img, rand_txt)
         thr = ((logits_rand_i.mean() + logits_rand_t.mean())/2).item()
 
-    # print(thr)
+    print(thr)
 
     best_score = 0
+    logger.info("Eval on val dataset")
+    Mn_R1 = evaluate(args, model, val_dataloader, logger)
     for epoch in range(args.epochs):
         model.train()
         sloss = 0
@@ -142,6 +144,13 @@ def main():
             optimizer.zero_grad()
 
             images, texts, *_ = batch
+
+            images = [preprocess(image).unsqueeze(0) for image in images]
+            images = torch.cat(images, dim=0)
+
+            texts = tokenizer(texts, truncate=True)
+            texts = [text.unsqueeze(0) for text in texts]
+            texts = torch.cat(texts, dim=0)
             images = images.cuda()
             texts = texts.cuda()
 
@@ -169,7 +178,7 @@ def main():
                 clip.model.convert_weights(model)
 
             if (idx % args.display == 0) and (idx != 0):
-                logger.info("Epoch: %d/%d, step:%d/%d, lr: %.8f, loss: %f", epoch + 1, args.epochs, idx, len(train_dataloader), optimizer.param_groups[0]['lr'], sloss / args.display)
+                logger.info("Epoch: %d/%d, step:%d/%d, lr: %.8f, loss: %f", epoch + 1, args.epochs, idx, train_length // args.batch_size, optimizer.param_groups[0]['lr'], sloss / args.display)
                 sloss = 0
 
         save_path = os.path.join(dir_path, f"epoch{epoch + 1}.pt")
